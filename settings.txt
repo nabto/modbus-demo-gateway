@@ -1,4 +1,4 @@
 baudrate=57600
 stopbits=1
 parity=even
-uart=/dev/ptyp0
+uart=/dev/ttyp0

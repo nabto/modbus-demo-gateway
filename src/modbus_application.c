@@ -18,7 +18,13 @@
 #include <modules/fingerprint_acl/fp_acl_memory.h>
 #include <modules/fingerprint_acl/fp_acl_file.h>
 
-
+// address 1 , regs array (next lines)
+// Name:Temp type:number register:0001
+// Name:Mode type:number register:0002
+#define MODBUS_CONFIGURATION "{\"a\":1,\"r\":" \
+                             "[{\"n\":\"Temp\",\"t\":\"n\",\"r\":\"0001\"}," \
+                             " {\"n\":\"Mode\",\"t\":\"n\",\"r\":\"0003\"}]" \
+                             "}"
 
 #define SCANNER_RESPONSE_TIMEOUT                                    1000
 
@@ -26,6 +32,7 @@ enum
 {
     // Modbus/device related queries
     QUERY_MODBUS_FUNCTION = 20000,
+    QUERY_MODBUS_CONFIGURATION = 20001,
 
 };
 
@@ -97,12 +104,12 @@ uint32_t modbus_number_of_addresses = 240;
 
 
 // From AMP-stub
-#define DEVICE_NAME_DEFAULT "AMP stub"
+#define DEVICE_NAME_DEFAULT "Nabto modbus gateway demo"
 #define MAX_DEVICE_NAME_LENGTH 50
 static char device_name_[MAX_DEVICE_NAME_LENGTH];
 static const char* device_product_ = "Modbus gateway demo";
 static const char* device_icon_ = "chip-small.png";
-static const char* device_interface_id_ = "317aadf2-3137-474b-8ddb-fea437c424f4";
+static const char* device_interface_id_ = "DC14A962-39C7-4067-8EC6-6A491E45E283";
 static uint16_t device_interface_version_major_ = 1;
 static uint16_t device_interface_version_minor_ = 0;
 
@@ -673,7 +680,12 @@ application_event_result application_event(application_request* request,
 
         //if (!fp_acl_is_request_allowed(request, REQUIRES_GUEST)) return AER_REQ_NO_ACCESS;
         return begin_modbus_function_query(request, query_request, query_response);
-        
+
+    case QUERY_MODBUS_CONFIGURATION:
+        if (!write_string(query_response, MODBUS_CONFIGURATION)) return AER_REQ_RSP_TOO_LARGE;
+        //if (!write_string(query_response, "HEJHEJHEJ")) return AER_REQ_RSP_TOO_LARGE;
+        return AER_REQ_RESPONSE_READY;
+
     default:
         NABTO_LOG_WARN(("Unhandled query id: %u", request->queryId));
         return AER_REQ_INV_QUERY_ID;

@@ -194,6 +194,14 @@
   </query>
 
 
+  <!-- Modbus configuration -->
+  <query name="modbus_configuration.json" description="Returns the modbus configuration" id="20001">
+    <request>
+    </request>
+    <response format="json">
+      <parameter name="data" type="raw" />
+    </response>
+  </query>
 
 
 </unabto_queries>
