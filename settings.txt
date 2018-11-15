@@ -1,4 +1,4 @@
-baudrate=57600
+baudrate=9600
 stopbits=1
 parity=even
-uart=/dev/ttyp0
+uart=/dev/ttyS0

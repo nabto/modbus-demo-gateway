@@ -21,12 +21,14 @@
 // address 1 , regs array (next lines)
 // Name:Temp type:number register:0001
 // Name:Mode type:number register:0002
-#define MODBUS_CONFIGURATION "{\"a\":1,\"r\":" \
-                             "[{\"n\":\"Temp\",\"t\":\"n\",\"r\":\"0001\"}," \
-                             " {\"n\":\"Mode\",\"t\":\"n\",\"r\":\"0003\"}]" \
+#define MODBUS_CONFIGURATION "{'a':1," \
+                             " 'r':[{'n':'Temperature','t':'n','r':'0003'}," \
+                             "      {'n':'Resitance','t':'n','r':'0005'}]" \
                              "}"
 
 #define SCANNER_RESPONSE_TIMEOUT                                    1000
+
+static char modbus_configuration[1400];
 
 enum
 {
@@ -74,6 +76,8 @@ typedef struct
     application_request* request;
     list messages;
 } modbus_query;
+
+
 
 // div private functions forward declerations
 static modbus_query* find_query(application_request* request);
@@ -211,6 +215,20 @@ void modbus_read_application_settings(void)
 
 }
 
+void modbus_read_modbus_configuration() {
+
+
+   strncpy(modbus_configuration, MODBUS_CONFIGURATION, sizeof(modbus_configuration));
+   modbus_configuration[sizeof(modbus_configuration)-1] = 0;
+   for(int i=0;i<sizeof(modbus_configuration);i++) {
+     if(modbus_configuration[i] == '\'')
+       modbus_configuration[i] = '\"';
+   }
+   NABTO_LOG_TRACE(("Modbus JSON configuration: %s", modbus_configuration));
+
+	
+}
+
 
 void modbus_application_initialize_with_uart(void) {
 
@@ -240,6 +258,7 @@ void modbus_application_initialize_with_uart(void) {
     
 
     modbus_read_application_settings();
+    modbus_read_modbus_configuration();
 
     uart_initialize_as_unix_uart(&uart, 0, uart_name_, baudrate, 8, parity, stopbits);
 
@@ -682,7 +701,7 @@ application_event_result application_event(application_request* request,
         return begin_modbus_function_query(request, query_request, query_response);
 
     case QUERY_MODBUS_CONFIGURATION:
-        if (!write_string(query_response, MODBUS_CONFIGURATION)) return AER_REQ_RSP_TOO_LARGE;
+        if (!write_string(query_response, modbus_configuration)) return AER_REQ_RSP_TOO_LARGE;
         //if (!write_string(query_response, "HEJHEJHEJ")) return AER_REQ_RSP_TOO_LARGE;
         return AER_REQ_RESPONSE_READY;
 
