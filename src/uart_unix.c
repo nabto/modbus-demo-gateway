@@ -186,7 +186,7 @@ void uart_initialize(uint8_t channel, void* name, uint32_t baudrate, uint8_t dat
 
     if (-1 == tcsetattr(uartChannel->fileDescriptor, TCSANOW, &tios))
     {
-        NABTO_LOG_FATAL(("Unable to configure UART '%s'.", _name));
+        NABTO_LOG_TRACE(("Unable to configure UART '%s'. Error:%s", _name, strerror(errno)));
     }
 
     NABTO_LOG_TRACE(("UART '%s' opened with handle %i.", _name, uartChannel->fileDescriptor));

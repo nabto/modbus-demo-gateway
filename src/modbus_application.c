@@ -22,9 +22,10 @@
 // Name:Temp type:number register:0001
 // Name:Mode type:number register:0002
 #define MODBUS_CONFIGURATION "{'a':1," \
-                             " 'r':[{'n':'Temperature','t':'n','r':'0003'}," \
+                             " 'r':[{'n':'Temperature','t':'n','r':'0003', 'f':'r/10'}," \
                              "      {'n':'Resitance','t':'n','r':'0005'}]" \
                              "}"
+#define MODBUS_CONFIGURATION_FILENAME "modbus_configuration.json"
 
 #define SCANNER_RESPONSE_TIMEOUT                                    1000
 
@@ -216,9 +217,35 @@ void modbus_read_application_settings(void)
 }
 
 void modbus_read_modbus_configuration() {
+   FILE *fp;
+   long length;
+  
+   // make sure the string is terminated 
+   modbus_configuration[0] = 0;
 
+   
+   NABTO_LOG_TRACE(("Will open modbusconfig file"));
+   fp = fopen(MODBUS_CONFIGURATION_FILENAME, "r");  /* open file for input */
+  
+   if (fp) {   
+     fseek (fp, 0, SEEK_END);
+     length = ftell(fp);
+     fseek (fp, 0, SEEK_SET);
+     if(length>sizeof(modbus_configuration)-1) {
+       NABTO_LOG_ERROR(("Modbus configuration file is to large"));
+     }
+     fread(modbus_configuration, 1, length, fp); /* read the configuration from the file */
+     modbus_configuration[length] = '\0';
+   }
+   else {
+      NABTO_LOG_ERROR(("Bad modbus_configuration file."));
+      modbus_configuration[0] = 0;
+      return;
+  }
+  fclose(fp);  /* close the input file */
 
-   strncpy(modbus_configuration, MODBUS_CONFIGURATION, sizeof(modbus_configuration));
+   // For debugging: strncpy(modbus_configuration, MODBUS_CONFIGURATION, sizeof(modbus_configuration));
+   // Replace ' with "
    modbus_configuration[sizeof(modbus_configuration)-1] = 0;
    for(int i=0;i<sizeof(modbus_configuration);i++) {
      if(modbus_configuration[i] == '\'')
