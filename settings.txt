@@ -2,3 +2,4 @@ baudrate=9600
 stopbits=1
 parity=even
 uart=/dev/ttyS0
+modbus_configuration=modbus_configuration.json

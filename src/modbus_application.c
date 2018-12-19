@@ -21,14 +21,17 @@
 // address 1 , regs array (next lines)
 // Name:Temp type:number register:0001
 // Name:Mode type:number register:0002
+
+// For debugging purposes only
 #define MODBUS_CONFIGURATION "{'a':1," \
                              " 'r':[{'n':'Temperature','t':'n','r':'0003', 'f':'r/10'}," \
                              "      {'n':'Resitance','t':'n','r':'0005'}]" \
                              "}"
-#define MODBUS_CONFIGURATION_FILENAME "modbus_configuration.json"
+
 
 #define SCANNER_RESPONSE_TIMEOUT                                    1000
 
+static char modbus_configuration_filename[1400];
 static char modbus_configuration[1400];
 
 enum
@@ -210,6 +213,9 @@ void modbus_read_application_settings(void)
       NABTO_LOG_ERROR(("Bad setting for 'modbus_number_of_addresses'"));
     }
 
+    if(settings_read_string("modbus_configuration", modbus_configuration_filename)) {
+      NABTO_LOG_ERROR(("Could not read 'modbus_configuration' from settingsfile"));
+    }
 
 
     NABTO_LOG_TRACE(("Modbus configuration: modbus_number_of_addresses=%u",modbus_number_of_addresses));
@@ -225,7 +231,7 @@ void modbus_read_modbus_configuration() {
 
    
    NABTO_LOG_TRACE(("Will open modbusconfig file"));
-   fp = fopen(MODBUS_CONFIGURATION_FILENAME, "r");  /* open file for input */
+   fp = fopen(modbus_configuration_filename, "r");  /* open file for input */
   
    if (fp) {   
      fseek (fp, 0, SEEK_END);
