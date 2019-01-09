@@ -10,9 +10,12 @@ cd modbus-demo-gateway
 
 ./build.sh
 
+# Fetch DEVICEID and DEVICEKEY from appmyproduct.com
+# Edit the DEVICEID and DEVICEKEY parameter in run.sh with the fetched parameters
 
 # Run the demo with a device ID and key obtained from www.appmyproduct.com 
-./amp_device_stub -d [PUT DEVICE ID FROM appmyproduct.com HERE] -k [PUT DEVICE KEY FROM appmyproduct.com HERE]
+./run.sh
+
 ```
 
 

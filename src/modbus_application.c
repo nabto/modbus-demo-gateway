@@ -112,10 +112,10 @@ uint32_t modbus_number_of_addresses = 240;
 
 
 // From AMP-stub
-#define DEVICE_NAME_DEFAULT "Nabto modbus gateway demo"
+#define DEVICE_NAME_DEFAULT "P2P modbus gateway"
 #define MAX_DEVICE_NAME_LENGTH 50
 static char device_name_[MAX_DEVICE_NAME_LENGTH];
-static const char* device_product_ = "Modbus gateway demo";
+static const char* device_product_ = "Nabto Modbus gateway";
 static const char* device_icon_ = "chip-small.png";
 static const char* device_interface_id_ = "DC14A962-39C7-4067-8EC6-6A491E45E283";
 static uint16_t device_interface_version_major_ = 1;
